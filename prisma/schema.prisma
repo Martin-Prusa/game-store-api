@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String
+  password String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  games         Game[]
+  ratings       Rating[]
+  GeneresOnGame GeneresOnGame[]
+}
+
+model Genre {
+  id    Int             @id @default(autoincrement())
+  name  String          @unique
+  games GeneresOnGame[]
+}
+
+model Game {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  sale        Float?
+  publisher   String?
+  developer   String?
+  releaseDate DateTime?
+
+  assignedBy   User @relation(fields: [assignedById], references: [id])
+  assignedById Int
+
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @default(now()) @updatedAt
+  genres    GeneresOnGame[]
+  ratings   Rating[]
+
+  genreId Int?
+}
+
+model GeneresOnGame {
+  game       Game     @relation(fields: [gameId], references: [id])
+  gameId     Int
+  genre      Genre    @relation(fields: [genreId], references: [id])
+  genreId    Int
+  assignedAt DateTime @default(now())
+
+  assignedById Int
+  assignedBy   User @relation(fields: [assignedById], references: [id])
+
+  @@id([gameId, genreId])
+}
+
+model Rating {
+  id      Int     @id @default(autoincrement())
+  value   Int     @default(0)
+  comment String?
+
+  assignedBy   User @relation(fields: [assignedById], references: [id])
+  assignedById Int
+
+  game   Game @relation(fields: [gameId], references: [id])
+  gameId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
