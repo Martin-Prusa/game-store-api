@@ -30,8 +30,7 @@ export class GameController {
   @Get()
   @UseGuards(JwtAuthGuard)
   findAll(@UseUser() user: User) {
-    console.log();
-    return user;
+    return this.gameService.findAll(user.id);
   }
 
   @Get(':id')
