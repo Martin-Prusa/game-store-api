@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
+  id       String @id @default(uuid())
   email    String
   password String
 
@@ -21,13 +21,13 @@ model User {
 }
 
 model Genre {
-  id    Int             @id @default(autoincrement())
+  id    String          @id @default(uuid())
   name  String          @unique
   games GeneresOnGame[]
 }
 
 model Game {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(uuid())
   name        String
   description String?
   price       Float
@@ -36,8 +36,8 @@ model Game {
   developer   String?
   releaseDate DateTime?
 
-  assignedBy   User @relation(fields: [assignedById], references: [id])
-  assignedById Int
+  assignedBy   User   @relation(fields: [assignedById], references: [id])
+  assignedById String
 
   createdAt DateTime        @default(now())
   updatedAt DateTime        @default(now()) @updatedAt
@@ -49,13 +49,13 @@ model Game {
 
 model GeneresOnGame {
   game       Game     @relation(fields: [gameId], references: [id])
-  gameId     Int
+  gameId     String
   genre      Genre    @relation(fields: [genreId], references: [id])
-  genreId    Int
+  genreId    String
   assignedAt DateTime @default(now())
 
-  assignedById Int
-  assignedBy   User @relation(fields: [assignedById], references: [id])
+  assignedById String
+  assignedBy   User   @relation(fields: [assignedById], references: [id])
 
   @@id([gameId, genreId])
 }
@@ -65,11 +65,11 @@ model Rating {
   value   Int     @default(0)
   comment String?
 
-  assignedBy   User @relation(fields: [assignedById], references: [id])
-  assignedById Int
+  assignedBy   User   @relation(fields: [assignedById], references: [id])
+  assignedById String
 
-  game   Game @relation(fields: [gameId], references: [id])
-  gameId Int
+  game   Game   @relation(fields: [gameId], references: [id])
+  gameId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

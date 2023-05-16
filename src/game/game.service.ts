@@ -36,7 +36,7 @@ export class GameService {
     });
   }
 
-  async findAll(userId: number): Promise<Array<Game>> {
+  async findAll(userId: string): Promise<Array<Game>> {
     return this.prisma.game.findMany({
       where: {
         assignedBy: {
@@ -47,7 +47,7 @@ export class GameService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateGameDto: UpdateGameDto,
     user: User,
   ): Promise<Game> {
@@ -81,7 +81,7 @@ export class GameService {
     });
   }
 
-  async findOne(id: number): Promise<Game> {
+  async findOne(id: string): Promise<Game> {
     return this.prisma.game.findUnique({
       where: {
         id,
@@ -89,7 +89,7 @@ export class GameService {
     });
   }
 
-  async delete(id: number): Promise<Game> {
+  async delete(id: string): Promise<Game> {
     return this.prisma.game.delete({
       where: {
         id,

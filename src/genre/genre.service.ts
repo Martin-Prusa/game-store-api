@@ -19,7 +19,7 @@ export class GenreService {
     return this.prisma.genre.findMany();
   }
 
-  async delete(id: number): Promise<Genre> {
+  async delete(id: string): Promise<Genre> {
     return this.prisma.genre.delete({
       where: {
         id,

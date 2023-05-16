@@ -4,9 +4,9 @@ import {
   IsOptional,
   IsString,
   IsNumber,
-  IsDate,
   MaxLength,
   IsArray,
+  IsDateString,
 } from 'class-validator';
 
 export class CreateGameDto {
@@ -45,13 +45,13 @@ export class CreateGameDto {
   developer?: string;
 
   @ApiProperty({ required: false })
-  @IsDate()
+  @IsDateString()
   @IsOptional()
   releaseDate?: Date;
 
   @ApiProperty({ required: false })
   @IsArray()
-  genres: number[];
+  genres: string[];
 }
 
 export class UpdateGameDto extends PartialType(CreateGameDto) {

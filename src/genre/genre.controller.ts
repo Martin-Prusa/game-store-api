@@ -31,7 +31,7 @@ export class GenreController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  delete(@Param('id') id: number) {
+  delete(@Param('id') id: string) {
     return this.genreService.delete(id);
   }
 }

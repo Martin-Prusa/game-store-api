@@ -35,14 +35,14 @@ export class GameController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: string) {
     return this.gameService.findOne(id);
   }
 
   @Put(':id')
   @UseGuards(JwtAuthGuard)
   update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateGameDto: UpdateGameDto,
     @UseUser() user: User,
   ) {
@@ -51,7 +51,7 @@ export class GameController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  delete(@Param('id') id: number) {
+  delete(@Param('id') id: string) {
     return this.gameService.delete(id);
   }
 }
