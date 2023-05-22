@@ -7,10 +7,12 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { GenreModule } from './genre/genre.module';
 import { GameModule } from './game/game.module';
+import { PrismaModule } from 'nestjs-prisma';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    PrismaModule.forRoot(),
     AuthModule,
     UsersModule,
     GenreModule,

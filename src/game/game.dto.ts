@@ -54,9 +54,16 @@ export class CreateGameDto {
   genres: string[];
 }
 
-export class UpdateGameDto extends PartialType(CreateGameDto) {
-  @ApiProperty({ required: false })
+export class UpdateGameDto extends PartialType(CreateGameDto) {}
+
+export class AddRatingDto {
+  @ApiProperty()
   @IsNumber()
-  @IsOptional()
-  id?: number;
+  @IsNotEmpty()
+  value: number;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  comment: string;
 }

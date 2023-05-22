@@ -43,8 +43,6 @@ model Game {
   updatedAt DateTime        @default(now()) @updatedAt
   genres    GeneresOnGame[]
   ratings   Rating[]
-
-  genreId Int?
 }
 
 model GeneresOnGame {

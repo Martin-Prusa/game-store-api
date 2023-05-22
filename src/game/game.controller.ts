@@ -10,11 +10,12 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { GameService } from './game.service';
-import { CreateGameDto, UpdateGameDto } from './game.dto';
+import { AddRatingDto, CreateGameDto, UpdateGameDto } from './game.dto';
 import { JwtAuthGuard } from '../auth/jwt.auth.gaurd';
 
 import { UseUser } from '../users/user.decorator';
 import type { User } from '@prisma/client';
+import { Admin } from 'typeorm';
 
 @ApiTags('games')
 @Controller('games')
@@ -47,6 +48,16 @@ export class GameController {
     @UseUser() user: User,
   ) {
     return this.gameService.update(id, updateGameDto, user);
+  }
+
+  @Put(':id/add-rating')
+  @UseGuards(JwtAuthGuard)
+  addRating(
+    @Param('id') id: string,
+    @Body() addRatingDto: AddRatingDto,
+    @UseUser() user: User,
+  ) {
+    return this.gameService.addRating(id, addRatingDto, user);
   }
 
   @Delete(':id')

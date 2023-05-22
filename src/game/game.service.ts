@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CreateGameDto, UpdateGameDto } from './game.dto';
+import { AddRatingDto, CreateGameDto, UpdateGameDto } from './game.dto';
 import { PrismaService } from '../prisma.service';
-import { Game, User } from '@prisma/client';
+import { Game, Rating, User } from '@prisma/client';
 
 @Injectable()
 export class GameService {
@@ -33,6 +33,7 @@ export class GameService {
           })),
         },
       },
+      include: { genres: { include: { genre: true } }, ratings: true },
     });
   }
 
@@ -51,33 +52,66 @@ export class GameService {
     updateGameDto: UpdateGameDto,
     user: User,
   ): Promise<Game> {
+    const currentGame = await this.prisma.game.findUnique({
+      where: { id },
+      include: { genres: true },
+    });
+
+    if (!currentGame) {
+      throw new Error('Game not found');
+    }
+
+    const currentGenreIds = currentGame.genres.map((g) => g.genreId);
+    const newGenreIds = updateGameDto.genres || [];
+
+    const connect = newGenreIds.filter((id) => !currentGenreIds.includes(id));
+    const disconnect = currentGenreIds.filter(
+      (id) => !newGenreIds.includes(id),
+    );
+
     return this.prisma.game.update({
       where: {
         id,
       },
 
       data: {
-        assignedBy: {
-          connect: {
-            id: user.id,
-          },
-        },
+        ...updateGameDto,
 
         genres: {
-          create: updateGameDto.genres.map((genre) => ({
-            assignedBy: {
-              connect: {
-                id: user.id,
+          delete:
+            disconnect.length > 0
+              ? disconnect.map((genreId) => ({
+                  gameId_genreId: {
+                    gameId: id,
+                    genreId,
+                  },
+                }))
+              : undefined,
+
+          connectOrCreate: connect.map((genreId) => ({
+            where: {
+              gameId_genreId: {
+                gameId: id,
+                genreId,
               },
             },
-            genre: {
-              connect: {
-                id: genre,
+            create: {
+              assignedBy: {
+                connect: {
+                  id: user.id,
+                },
+              },
+              genre: {
+                connect: {
+                  id: genreId,
+                },
               },
             },
           })),
         },
       },
+
+      include: { genres: { include: { genre: true } }, ratings: true },
     });
   }
 
@@ -86,6 +120,7 @@ export class GameService {
       where: {
         id,
       },
+      include: { genres: { include: { genre: true } }, ratings: true },
     });
   }
 
@@ -93,6 +128,28 @@ export class GameService {
     return this.prisma.game.delete({
       where: {
         id,
+      },
+    });
+  }
+
+  async addRating(
+    id: string,
+    rating: AddRatingDto,
+    user: User,
+  ): Promise<Rating> {
+    return this.prisma.rating.create({
+      data: {
+        ...rating,
+        game: {
+          connect: {
+            id: id,
+          },
+        },
+        assignedBy: {
+          connect: {
+            id: user.id,
+          },
+        },
       },
     });
   }
