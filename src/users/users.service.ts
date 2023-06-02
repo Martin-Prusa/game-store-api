@@ -50,10 +50,12 @@ export class UsersService {
   }
 
   async findByPayload({ email }: { email: string }): Promise<any> {
-    const { password, ...rest } = await this.prisma.user.findFirst({
+    const data = await this.prisma.user.findFirst({
       where: { email },
     });
 
-    return rest;
+    delete data?.password;
+
+    return data;
   }
 }
